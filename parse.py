@@ -1,3 +1,4 @@
+import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 from pathlib import Path
 import pandas as pd
@@ -24,10 +25,16 @@ reboots = ["2025/01/20 23:01:00", "2025/01/27 23:01:00", "2025/02/03 23:01:00", 
 markers= [pd.Timestamp(x) for x in reboots]
 series = pd.Series(series_data, series_index).sort_index()
 
-plt.figure(figsize=(12, 6))
+plt.figure()
+fig, ax = plt.subplots()
+fig.set_size_inches(12, 6)
+
 series.plot()
 plt.scatter(markers, [0 for _ in range(len(markers))], c="red", label="reboots")
+
 plt.title("CSCTCloud %memusage")
 plt.legend()
-plt.xticks(minor=True)
+ax.xaxis.set_minor_locator(mdates.DayLocator())
+ax.grid(which="both", axis="x")
+
 plt.savefig("output.png")
