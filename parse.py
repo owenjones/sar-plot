@@ -36,7 +36,8 @@ with open("./data/reboots.txt") as log:
         date = f"{parse[0]} {parse[1]} {year} {parse[2]}"
         reboots.append(date)
 
-markers = [pd.Timestamp(x) for x in reboots]
+earliest = series.index.min()
+markers = list(filter(lambda y: y >= earliest, [pd.Timestamp(x) for x in reboots]))
 
 
 # plotting
