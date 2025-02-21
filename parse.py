@@ -7,7 +7,7 @@ import re
 series_data = []
 series_index = []
 
-for file in (Path(".") / "data").glob("*.txt"):
+for file in (Path(".") / "data").glob("sar*.txt"):
     with open(file) as log:
         blocks = log.read().split("\n\n")
         date = re.match(r".*(\d+\/\d+\/\d+).*", blocks[0])[1]
