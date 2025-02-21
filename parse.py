@@ -1,9 +1,11 @@
+from datetime import datetime
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 from pathlib import Path
 import pandas as pd
 import re
 
+# `sar -r` data into pandas Series for line plot
 series_data = []
 series_index = []
 
@@ -21,10 +23,23 @@ for file in Path("./data").glob("sar*.txt"):
             series_data.append(float(usage))
             series_index.append(pd.Timestamp(f"{date} {time}"))
 
-reboots = ["2025/01/20 23:01:00", "2025/01/27 23:01:00", "2025/02/03 23:01:00", "2025/02/10 23:01:00", "2025/02/14 13:39:00", "2025/02/14 13:43:00", "2025/02/17 23:01:00"]
-markers= [pd.Timestamp(x) for x in reboots]
 series = pd.Series(series_data, series_index).sort_index()
 
+# `last` system boot data into a pandas Series for scatter plot
+year = datetime.now().year # super horrible I know...
+reboots = []
+
+with open("./data/reboots.txt") as log:
+    lines = log.read().split("\n")
+    for line in lines[:-1]:
+        parse = list(filter(lambda x: x != "", re.match(r"reboot   system boot  .*-azur .{3} (.{3} [\d ]{1,2} [\d:]{4,5}).*", line)[1].split(" ")))
+        date = f"{parse[0]} {parse[1]} {year} {parse[2]}"
+        reboots.append(date)
+
+markers = [pd.Timestamp(x) for x in reboots]
+
+
+# plotting
 plt.figure()
 fig, ax = plt.subplots()
 fig.set_size_inches(12, 6)
